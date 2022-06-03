@@ -4,6 +4,7 @@ import com.dev.igor.serviceproduto.http.data.request.ProdutoPersistDto;
 import com.dev.igor.serviceproduto.http.data.response.ProdutoResponseDto;
 import com.dev.igor.serviceproduto.model.Produto;
 import com.dev.igor.serviceproduto.service.ProdutoService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 public class ProdutoController {
 
     private final ProdutoService produtoService;
+    private final ModelMapper modelMapper;
 
-    public ProdutoController(ProdutoService produtoService) {
+    public ProdutoController(ProdutoService produtoService, ModelMapper modelMapper) {
         this.produtoService = produtoService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping
@@ -22,6 +25,6 @@ public class ProdutoController {
     public ProdutoResponseDto inserir(@RequestBody ProdutoPersistDto dto) {
         Produto produto = new Produto(dto.getDescricao(), dto.getValor());
         Produto produtoPersistido =  produtoService.inserir(produto);
-        return new ProdutoResponseDto(produtoPersistido.getId(), produtoPersistido.getDescricao());
+        return modelMapper.map(produtoPersistido, ProdutoResponseDto.class);
     }
 }
