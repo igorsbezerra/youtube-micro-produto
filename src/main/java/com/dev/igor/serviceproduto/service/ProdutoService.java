@@ -4,4 +4,5 @@ import com.dev.igor.serviceproduto.model.Produto;
 
 public interface ProdutoService {
     Produto inserir(Produto produto);
+    Produto one(Long id);
 }
