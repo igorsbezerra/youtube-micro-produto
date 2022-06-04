@@ -27,4 +27,11 @@ public class ProdutoController {
         Produto produtoPersistido =  produtoService.inserir(produto);
         return modelMapper.map(produtoPersistido, ProdutoResponseDto.class);
     }
+
+    @GetMapping("/{id}")
+    public ProdutoResponseDto one(@PathVariable("id") Long id) {
+        var produto = produtoService.one(id);
+        return modelMapper.map(produto, ProdutoResponseDto.class);
+    }
+
 }
