@@ -2,38 +2,34 @@ package com.dev.igor.serviceproduto.http;
 
 import com.dev.igor.serviceproduto.http.data.request.ProdutoPersistDto;
 import com.dev.igor.serviceproduto.http.data.response.ProdutoResponseDto;
-import com.dev.igor.serviceproduto.model.Produto;
-import com.dev.igor.serviceproduto.service.ProdutoService;
-import org.modelmapper.ModelMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RestController
-@RequestMapping("/produto")
-public class ProdutoController {
-
-    private final ProdutoService produtoService;
-    private final ModelMapper modelMapper;
-
-    public ProdutoController(ProdutoService produtoService, ModelMapper modelMapper) {
-        this.produtoService = produtoService;
-        this.modelMapper = modelMapper;
-    }
-
+public interface ProdutoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProdutoResponseDto inserir(@Valid @RequestBody ProdutoPersistDto dto) {
-        Produto produto = new Produto(dto.getDescricao(), dto.getValor());
-        Produto produtoPersistido =  produtoService.inserir(produto);
-        return modelMapper.map(produtoPersistido, ProdutoResponseDto.class);
-    }
+    ProdutoResponseDto inserir(@Valid @RequestBody ProdutoPersistDto dto);
 
+    @Operation(summary = "Retorna produto correspondente ao identificador recuperado por parâmetro")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(
+                                    value = "{ \"codigo\": \"X_100\", \"mensagem\": \"Produto de código 45 não encontrado\", \"documentacao\": null }"
+                            )
+                    )
+            )
+    })
     @GetMapping("/{id}")
-    public ProdutoResponseDto one(@PathVariable("id") Long id) {
-        var produto = produtoService.one(id);
-        return modelMapper.map(produto, ProdutoResponseDto.class);
-    }
-
+    ProdutoResponseDto one(@PathVariable("id") Long id);
 }
